@@ -5,7 +5,6 @@ import InputSimulator from "../ui/InputSimulator";
 
 const LandingPage = () => {
   const [inputString, setInputString] = useState<Array<inputStringType>>([]);
-
   const handle_input_change = (value: string) => {
     const stringArray = value.split("");
 

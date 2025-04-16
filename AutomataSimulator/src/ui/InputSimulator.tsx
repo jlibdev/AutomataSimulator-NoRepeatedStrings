@@ -9,6 +9,7 @@ const InputSimulator = ({
 }: {
   inputString: Array<inputStringType>;
   handle_input_change: (value: string) => void;
+  disabled?: boolean;
 }) => {
   return (
     <div className="flex flex-col items-center gap-2">

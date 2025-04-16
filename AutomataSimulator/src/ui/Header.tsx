@@ -8,7 +8,9 @@ const Header = () => {
           Strings with no repeated character
         </p>
       </section>
-      <section id="actions" className="flex gap-5"></section>
+      <section id="actions" className="flex gap-5">
+        
+      </section>
     </header>
   );
 };
