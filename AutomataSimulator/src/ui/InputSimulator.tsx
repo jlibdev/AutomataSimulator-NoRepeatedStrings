@@ -16,6 +16,7 @@ const InputSimulator = ({
       <Input
         placeholder="Enter string [0-9]"
         type="number"
+        value={inputString.map((character) => character.input).join("")}
         min="0"
         className="min-w-2xl"
         step="1"
@@ -27,9 +28,10 @@ const InputSimulator = ({
         onChange={(e) => handle_input_change(e.target.value)}
       />
 
-      <section className="flex gap-2">
-        {inputString?.map((character) => (
+      <section className="flex flex-wrap gap-2 w-full justify-center">
+        {inputString?.map((character, index) => (
           <span
+            key={index}
             className={clsx(
               "text-xl",
               character.is_repeated && "text-red-600 scale-110 font-bold"
