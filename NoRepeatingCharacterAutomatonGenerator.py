@@ -113,13 +113,12 @@ def generate_state_xml(inputs=['0', '1', '2','3','4','5','6','7','8','9']):
 
 
 # Limit States
-xml_content = generate_state_xml(inputs=['0', '1', '2','3','4','5'])
+# xml_content = generate_state_xml(inputs=['0', '1', '2','3','4','5'])
 
 # Full States
 
-# xml_content = generate_state_xml()
+xml_content = generate_state_xml()
 
 with open("states.jff", "w", encoding="utf-8") as f:
     f.write(xml_content)
-
 
