@@ -9,7 +9,7 @@ const Input = ({
     <input
       {...props}
       className={clsx(
-        "border px-4 py-2 rounded-2xl border-secondary text-sm focus:ring-accent focus:border-accent",
+        "border px-4 py-2 rounded-2xl border-secondary text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent",
         className
       )}
     />
