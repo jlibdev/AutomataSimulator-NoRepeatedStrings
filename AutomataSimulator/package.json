@@ -13,13 +13,16 @@
     "@tailwindcss/vite": "^4.1.4",
     "clsx": "^2.1.1",
     "cytoscape": "^3.31.2",
+    "js-combinatorics": "^2.1.2",
     "lucide-react": "^0.488.0",
     "react": "^19.0.0",
+    "react-cytoscapejs": "^2.0.0",
     "react-dom": "^19.0.0",
     "tailwindcss": "^4.1.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
+    "@types/js-combinatorics": "^0.5.32",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",

@@ -28,7 +28,7 @@ const InputSimulator = ({
         onChange={(e) => handle_input_change(e.target.value)}
       />
 
-      <section className="flex flex-wrap gap-2 w-full justify-center">
+      <section className="flex flex-wrap gap-2 w-full justify-center min-h-[30px]">
         {inputString?.map((character, index) => (
           <span
             key={index}
