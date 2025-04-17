@@ -42,8 +42,8 @@ const LandingPage = () => {
         handle_input_change={handle_input_change}
         inputString={inputString}
       />
-      <FAVisualizer elements={elements}></FAVisualizer>
-      {/* <ModelVisualizer></ModelVisualizer> */}
+      {/* <FAVisualizer elements={elements}></FAVisualizer> */}
+      <ModelVisualizer el={elements}></ModelVisualizer>
     </div>
   );
 };

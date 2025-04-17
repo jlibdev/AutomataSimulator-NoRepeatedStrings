@@ -6,7 +6,7 @@ export function normalizeElementPositions(states: Array<ElementDefinition>) {
     let current_y = 0;
 
     const positions = states.map(state => state.position?.y).filter((y): y is number => y !== undefined);
-  
+    
     if (positions.length === 0) return;
   
     const maxY = Math.max(...positions);
@@ -37,12 +37,17 @@ export function normalizeElementPositions(states: Array<ElementDefinition>) {
 
 
 export function generateFAElements(combinations : Array<string>){
-    console.log(combinations)
-    const pos_increment = 250;
+    const pos_increment = 1000;
+    
     let x_pos = 0;
     let y_pos = 0; 
     let prev_len = 0;
-    let states: Array<ElementDefinition> = [{data: {id: "initial", label : "q0", state: "initial"}, position : {x: 0, y : 0}}]
+    let states: Array<ElementDefinition> = [
+      {
+        data: {id: "initial", label : "q0", state: "initial" , is_initial : true},
+        position : {x: 0, y : 0}
+      },
+     ]
 
     let transitions: Array<ElementDefinition> = []
 
@@ -53,7 +58,7 @@ export function generateFAElements(combinations : Array<string>){
             y_pos = 0;
         }
 
-        states.push({data:{ id: state , label: "q" + (index+1), state: "final"},position: {x: x_pos, y: y_pos}})
+        states.push({data:{ id: state , label: "q" + (index+1), state: "final" , is_initial : "false"},position: {x: x_pos, y: y_pos}})
 
         if(state.length === 1){
             transitions.push({data : {source: "initial" , target: state , label:  state.charAt(state.length - 1)}})
@@ -62,7 +67,7 @@ export function generateFAElements(combinations : Array<string>){
 
             layers.forEach(layer=>{
                 if(isSubset(layer, state)){
-                    transitions.push({data : {source: layer , target: state , label: stringDifference(state, layer)}})
+                    transitions.push({data : {id : layer + "-" + state , source: layer , target: state , label: stringDifference(state, layer)}})
                 }
             })
         }

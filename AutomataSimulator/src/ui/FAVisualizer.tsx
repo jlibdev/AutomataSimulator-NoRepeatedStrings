@@ -14,29 +14,36 @@ export default function FAVisualizer({
     {
       selector: "node",
       style: {
-        "background-color": "#0074D9", // Default node color
+        "background-color": "#fff",
         label: "data(label)",
-        color: "#fff", // Text color
-        "font-size": "16px", // Font size
+        width: "150px",
+        height: "150px",
+        color: "#fff",
+        "font-size": "100px",
         "text-valign": "center",
+        "text-outline-width": 5,
       },
     },
     {
-      // Style for initial state node
       selector: 'node[state="initial"]',
       style: {
-        "background-color": "#22e7f0",
-        "border-width": "3px", // Border width for initial state
-        "border-color": "#005f7f", // Darker border for emphasis
+        "border-width": "3px",
+        "border-color": "#005f7f",
       },
     },
     {
-      // Style for final state node
+      selector: "node[is_initial = true]",
+      style: {
+        "border-width": "20px",
+        "border-color": "#7f3d7f",
+      },
+    },
+    {
       selector: 'node[state="final"]',
       style: {
-        "background-color": "#e57cf6", // Purple for final state
-        "border-width": "3px", // Border width for final state
-        "border-color": "#7f3d7f", // Darker purple border
+        "background-color": "#e57cf6",
+        "border-width": "20px",
+        "border-color": "#7f3d7f",
       },
     },
     {
@@ -49,6 +56,34 @@ export default function FAVisualizer({
         "target-arrow-color": "#999",
         "text-rotation": "autorotate",
         color: "#fff",
+        "font-size": "100px",
+        "text-outline-width": 5,
+        "arrow-scale": 5,
+        "target-endpoint": "outside-to-node",
+        "source-endpoint": "outside-to-node",
+      },
+    },
+    {
+      selector: ".state",
+      style: {
+        shape: "ellipse",
+        "background-color": "#3498db",
+        label: "data(label)",
+        width: "80px",
+        height: "80px",
+        "text-valign": "center",
+        color: "#fff",
+        "font-size": "20px",
+      },
+    },
+    {
+      selector: ".start-arrow",
+      style: {
+        shape: "tag",
+        "background-color": "#2ecc71",
+        width: "20px",
+        height: "60px",
+        "text-opacity": 0, // no label
       },
     },
   ];
@@ -57,10 +92,23 @@ export default function FAVisualizer({
     <div className="w-full h-full p-5 flex flex-col gap-2">
       <span className="text-2xl">Visualizer</span>
       <div className="w-full h-full outline rounded-2xl bg-gray-900">
-        <div className="w-[100%] h-[5%] bg-slate-800 rounded-t-2xl px-2"></div>
+        <div className="w-[100%] h-[8%] bg-slate-800 rounded-t-2xl px-5 flex items-center text-black font-display gap-5 ">
+          <button className="bg-slate-300 rounded-[5px] px-2">
+            Full Model
+          </button>
+          <button className="bg-slate-300 rounded-[5px] px-2">
+            Grabble Nodes
+          </button>
+          <button className="bg-slate-300 rounded-[5px] px-2">
+            Idle Animation
+          </button>
+          <button className="bg-slate-300 rounded-[5px] px-2">
+            Trace Input
+          </button>
+        </div>
         <CytoscapeComponent
           elements={elements}
-          style={{ width: "100%", height: "95%" }}
+          style={{ width: "100%", height: "92%" }}
           layout={{ name: "preset" }}
           stylesheet={stylesheet}
           cy={(cy: Core) => {
