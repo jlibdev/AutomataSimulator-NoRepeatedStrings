@@ -6,6 +6,7 @@ import FAVisualizer from "../ui/FAVisualizer";
 import { ElementDefinition } from "cytoscape";
 import { getAllCombinations } from "../utils/combinatorics";
 import { generateFAElements } from "../utils/state_generator";
+import ModelVisualizer from "../ui/ModelVisualizer";
 
 const LandingPage = () => {
   const [inputString, setInputString] = useState<Array<inputStringType>>([]);
@@ -42,6 +43,7 @@ const LandingPage = () => {
         inputString={inputString}
       />
       <FAVisualizer elements={elements}></FAVisualizer>
+      {/* <ModelVisualizer></ModelVisualizer> */}
     </div>
   );
 };

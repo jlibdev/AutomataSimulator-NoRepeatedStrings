@@ -17,7 +17,8 @@ export default function FAVisualizer({
         "background-color": "#0074D9", // Default node color
         label: "data(label)",
         color: "#fff", // Text color
-        "font-size": "14px", // Font size
+        "font-size": "16px", // Font size
+        "text-valign": "center",
       },
     },
     {
@@ -42,9 +43,12 @@ export default function FAVisualizer({
       selector: "edge",
       style: {
         label: "data(label)",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "line-color": "#999",
+        "target-arrow-color": "#999",
         "text-rotation": "autorotate",
         color: "#fff",
-        "font-size": "12px",
       },
     },
   ];
