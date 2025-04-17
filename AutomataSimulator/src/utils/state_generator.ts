@@ -1,8 +1,44 @@
 import { ElementDefinition } from "cytoscape";
 import { isSubset, stringDifference } from "./sets";
 
+export function normalizeElementPositions(states: Array<ElementDefinition>) {
+    let prev_len = 0;
+    let current_y = 0;
+
+    const positions = states.map(state => state.position?.y).filter((y): y is number => y !== undefined);
+  
+    if (positions.length === 0) return;
+  
+    const maxY = Math.max(...positions);
+  
+    states.forEach((state) => {
+      if (!state.position) return;
+  
+      const idLength = state.data?.id?.length ?? 1;
+  
+      if (state.data.id === "initial") {
+        state.position.y = maxY / 2;
+        return;
+      }
+  
+      if (prev_len !== idLength) {
+        const countSameLength = states.filter(s => s.data?.id?.length === idLength).length;
+        const y_increment = maxY / (countSameLength + 1);
+        current_y = y_increment;
+      }
+  
+      state.position.y = current_y;
+      current_y += maxY / (states.filter(s => s.data?.id?.length === idLength).length + 1);
+  
+      prev_len = idLength;
+    });
+  }
+  
+
+
 export function generateFAElements(combinations : Array<string>){
-    const pos_increment = 100;
+    console.log(combinations)
+    const pos_increment = 250;
     let x_pos = 0;
     let y_pos = 0; 
     let prev_len = 0;
@@ -26,7 +62,6 @@ export function generateFAElements(combinations : Array<string>){
 
             layers.forEach(layer=>{
                 if(isSubset(layer, state)){
-                    console.log(layer , state , stringDifference(layer, state))
                     transitions.push({data : {source: layer , target: state , label: stringDifference(state, layer)}})
                 }
             })
@@ -35,6 +70,9 @@ export function generateFAElements(combinations : Array<string>){
         y_pos += pos_increment
         prev_len = state.length
     })
+
+
+    normalizeElementPositions(states)
 
     return [...states, ...transitions];
 }
