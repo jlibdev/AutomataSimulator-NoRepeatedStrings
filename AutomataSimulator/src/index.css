@@ -2,9 +2,10 @@
 
 @theme {
     --font-display: "Satoshi", "sans-serif";
-    --color-text: #011213;
-    --color-background: #edfefe;
-    --color-primary: #22e7f0;
-    --color-secondary: #e57cf6;
-    --color-accent: #f34ba1;
+    --color-text: #10140e;
+    --color-background: #fbfcfb;
+    --color-primary: #72986a;
+    --color-secondary: #aec7c1;
+    --color-accent: #87acac;
+
   }

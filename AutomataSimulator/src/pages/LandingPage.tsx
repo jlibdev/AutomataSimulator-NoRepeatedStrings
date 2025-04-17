@@ -6,15 +6,23 @@ import FAVisualizer from "../ui/FAVisualizer";
 import { ElementDefinition } from "cytoscape";
 import { getAllCombinations } from "../utils/combinatorics";
 import { generateFAElements } from "../utils/state_generator";
-import ModelVisualizer from "../ui/ModelVisualizer";
+import { getValidString } from "../utils/Validators";
 
 const LandingPage = () => {
   const [inputString, setInputString] = useState<Array<inputStringType>>([]);
-  const [elements, setElements] = useState<Array<ElementDefinition>>([]);
+  const [validUserInput, setValidUserInput] = useState<Array<string>>([]);
+  const [elements, setElements] = useState<{
+    states: Array<ElementDefinition>;
+    transitions: Array<ElementDefinition>;
+  }>({ states: [], transitions: [] });
   const [combinations, setCombinations] = useState<Array<string>>([]);
 
   const handle_input_change = (value: string) => {
     const stringArray = value.split("");
+
+    const validInput = getValidString(stringArray);
+
+    setValidUserInput(validInput);
 
     const inputStrings: Array<inputStringType> = [];
 
@@ -42,8 +50,22 @@ const LandingPage = () => {
         handle_input_change={handle_input_change}
         inputString={inputString}
       />
-      {/* <FAVisualizer elements={elements}></FAVisualizer> */}
-      <ModelVisualizer el={elements}></ModelVisualizer>
+      <div className="flex flex-col w-full h-full p-5">
+        <div className="bg-slate-800 w-full h-full rounded-2xl overflow-hidden flex flex-col justify-between">
+          <div className="bg-slate-600 px-10 flex items-center h-[5%] text-white">
+            Hello
+          </div>
+          <FAVisualizer
+            inputString = {inputString}
+            userInput={validUserInput}
+            states={elements.states}
+            transistions={elements.transitions}
+          />
+          <div className="bg-slate-600 px-10 flex items-center h-[5%] text-white">
+            Hello
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

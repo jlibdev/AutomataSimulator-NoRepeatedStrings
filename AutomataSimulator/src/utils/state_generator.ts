@@ -6,6 +6,7 @@ export function normalizeElementPositions(states: Array<ElementDefinition>) {
     let current_y = 0;
 
     const positions = states.map(state => state.position?.y).filter((y): y is number => y !== undefined);
+
     
     if (positions.length === 0) return;
   
@@ -44,9 +45,13 @@ export function generateFAElements(combinations : Array<string>){
     let prev_len = 0;
     let states: Array<ElementDefinition> = [
       {
-        data: {id: "initial", label : "q0", state: "initial" , is_initial : true},
-        position : {x: 0, y : 0}
+        data: {id: "initial", label : "q0"},
+        position : {x: 0, y : 0}, 
+        classes: "initial final"
       },
+      {
+        data : {id: "initial_arrow"}, position : {x: -45 , y: 0}, grabbable : false
+      }
      ]
 
     let transitions: Array<ElementDefinition> = []
@@ -58,26 +63,27 @@ export function generateFAElements(combinations : Array<string>){
             y_pos = 0;
         }
 
-        states.push({data:{ id: state , label: "q" + (index+1), state: "final" , is_initial : "false"},position: {x: x_pos, y: y_pos}})
+        states.push({data:{ id: state , label: "q" + (index+1)} , position: {x: x_pos, y: y_pos}, classes: "final"})
 
         if(state.length === 1){
-            transitions.push({data : {source: "initial" , target: state , label:  state.charAt(state.length - 1)}})
+            transitions.push({data : {id : "initial" + " - " + state, source: "initial" , target: state , label: state.charAt(state.length - 1)}})
         }else{
             const layers = combinations.filter((combination)=>(combination.length == state.length -1))
 
             layers.forEach(layer=>{
                 if(isSubset(layer, state)){
-                    transitions.push({data : {id : layer + "-" + state , source: layer , target: state , label: stringDifference(state, layer)}})
+                    transitions.push({data : {id : layer + " - " + state , source: layer , target: state , label: stringDifference(state, layer)}})
                 }
             })
         }
 
         y_pos += pos_increment
         prev_len = state.length
+
     })
 
 
     normalizeElementPositions(states)
 
-    return [...states, ...transitions];
+    return {states : states , transitions : transitions};
 }
