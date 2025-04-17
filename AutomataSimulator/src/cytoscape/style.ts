@@ -39,7 +39,7 @@ export const styleSheet : Array<StylesheetStyle> = [
         style : {
             color: "#fff",
             shape: "ellipse",
-            backgroundColor: "#008000"
+            backgroundColor: "#008000",
         }
     },
     {
@@ -63,9 +63,12 @@ export const styleSheet : Array<StylesheetStyle> = [
     {
         selector : ".pathEdge",
         style : {
-            color: "#72986a",
+            color: "#fff",
+            "text-outline-color" : "#000",
+            "text-outline-width" : "8px",
             "line-color": "#72986a",
-            "target-arrow-color" : "#72986a"
+            "target-arrow-color" : "#72986a",
+            width: 4
         }
     },
     {
@@ -79,9 +82,20 @@ export const styleSheet : Array<StylesheetStyle> = [
     {
         selector : ".invalidState",
        style: {
-        backgroundColor: "#FF9494",
-        "border-color" : "#FF9494",
+        backgroundColor: "#B71C1C",
+        "border-color" : "#B71C1C",
         color: "#fff"
        }
+    },
+    {
+        selector : ".invalidPath",
+        style: {
+            color: "#fff",
+            "text-outline-color" : "#000",
+            "text-outline-width" : "4px",
+            "line-color": "#B71C1C",
+            "target-arrow-color" : "#B71C1C",
+            width: 4
+        }
     }
 ]

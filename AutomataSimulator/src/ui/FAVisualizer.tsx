@@ -51,20 +51,27 @@ const FAVisualizer = ({
     }
 
     paths.forEach((path) => {
-      const edge = cy.getElementById(prev_path + " - " + path);
-      const node = cy.getElementById(path);
+      const sorted_path = path.split("").sort().join("");
+      const edge = cy.getElementById(prev_path + " - " + sorted_path);
+      const node = cy.getElementById(sorted_path);
 
       edge.addClass("pathEdge");
       node.addClass("pathNode");
       if (inputString.length == userInput.length) {
-        console.log("Valid");
+        // console.log("Valid");
       } else {
         if (path.length == userInput.length) {
           node.addClass("invalidState");
+          cy.edges().map((edge) => {
+            if (edge.source().id() == sorted_path) {
+              console.log(edge);
+              edge.addClass("invalidPath");
+            }
+          });
         }
       }
 
-      prev_path = path;
+      prev_path = sorted_path;
     });
 
     // Events
