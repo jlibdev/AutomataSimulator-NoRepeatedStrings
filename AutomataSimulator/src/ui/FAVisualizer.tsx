@@ -53,9 +53,10 @@ export default function FAVisualizer({
     <div className="w-full h-full p-5 flex flex-col gap-2">
       <span className="text-2xl">Visualizer</span>
       <div className="w-full h-full outline rounded-2xl bg-gray-900">
+        <div className="w-[100%] h-[5%] bg-slate-800 rounded-t-2xl px-2"></div>
         <CytoscapeComponent
           elements={elements}
-          style={{ width: "100%", height: "100%" }}
+          style={{ width: "100%", height: "95%" }}
           layout={{ name: "preset" }}
           stylesheet={stylesheet}
           cy={(cy: Core) => {
