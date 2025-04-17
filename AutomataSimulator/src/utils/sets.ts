@@ -12,8 +12,8 @@ export function stringDifference(a: string, b : string) {
   
 export function getAllCharacterFromMax(digits : string){
   const maxDigit = Math.max(...digits.split("").map(Number));
-      const all_digits = Array.from({ length: maxDigit + 1 }, (_, i) => i).join(
-        ""
-      );
-      return all_digits
+  const cappedMax = Math.min(maxDigit + 2, 9);
+  const all_digits = Array.from({ length: cappedMax + 1 }, (_, i) => i).join("");
+
+  return all_digits
 }

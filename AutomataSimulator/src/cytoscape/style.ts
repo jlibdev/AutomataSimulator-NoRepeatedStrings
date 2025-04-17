@@ -68,7 +68,9 @@ export const styleSheet : Array<StylesheetStyle> = [
             "text-outline-width" : "8px",
             "line-color": "#72986a",
             "target-arrow-color" : "#72986a",
-            width: 4
+            width: 4,
+            "transition-property": "line-color",
+            "transition-duration": 0.3
         }
     },
     {
@@ -76,15 +78,21 @@ export const styleSheet : Array<StylesheetStyle> = [
         style: {
             backgroundColor: "#72986a",
             "border-color" : "#008000",
-            color: "#fff"
+            color: "#fff",
+            "transition-property": "background-color",
+            "transition-duration" : 0.3,
+            "transition-delay" : 1,
+            "transition-timing-function": "ease-in-out-quint",
         }
     },
     {
         selector : ".invalidState",
-       style: {
+        style: {
         backgroundColor: "#B71C1C",
         "border-color" : "#B71C1C",
-        color: "#fff"
+        color: "#fff",
+        "transition-property": "background-color",
+        "transition-duration": 0.3
        }
     },
     {
@@ -95,7 +103,9 @@ export const styleSheet : Array<StylesheetStyle> = [
             "text-outline-width" : "4px",
             "line-color": "#B71C1C",
             "target-arrow-color" : "#B71C1C",
-            width: 4
+            width: 4,
+            "transition-property": "line-color",
+            "transition-duration": 0.3
         }
     }
 ]
