@@ -1,7 +1,8 @@
-import Input from "../components/Input";
+
 import clsx from "clsx";
 import { Check, X } from "lucide-react";
 import { inputStringType } from "../types/AutomatonTypes";
+import { Input } from "@/components/ui/input";
 
 const InputSimulator = ({
   inputString,

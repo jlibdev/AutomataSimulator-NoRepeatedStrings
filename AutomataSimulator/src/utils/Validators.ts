@@ -11,3 +11,8 @@ export const getValidString = (userInputs: Array<string>) => {
 
     return seen_characters;
   };
+
+
+export const isStringValid = (userInput : string) => {
+   return new Set(userInput).size !== userInput.length;
+}
