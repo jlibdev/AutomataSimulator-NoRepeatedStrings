@@ -36,8 +36,9 @@ const OutputSimulator = ({
           isValidInput ? "text-black" : "text-green-500"
         )}
       >
-        {inputArray.map((character) => (
+        {inputArray.map((character, index) => (
           <TypographyH1
+            key={index}
             className={cn(
               "transition-all",
               repeating.includes(character) && "text-red-500 mb-2"

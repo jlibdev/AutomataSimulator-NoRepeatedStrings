@@ -7,13 +7,15 @@ interface useCytoscapeFATypes {
     states: ElementDefinition[],
     transitions: ElementDefinition[],
     layoutName: "preset"| "circle" | "concentric" | "cose" | "grid" | "random",
+    handleNodeSelect : (id : string , label: string) => void
 }
 
 export const useCytoscapeFA = (
    { containerRef,
     states,
     transitions,
-    layoutName = "preset" 
+    layoutName = "preset",
+    handleNodeSelect
   }:useCytoscapeFATypes
   ) =>
     {
@@ -32,15 +34,25 @@ export const useCytoscapeFA = (
           });
       
         instanceRef.current = cy;
-        
+
         cy.on("select", "node", function (evt) {
           const node = evt.target;
+          handleNodeSelect(node.data().id , node.data().label)
+        });
+
+        cy.on("drag", "node", function (evt) {
+          const node = evt.target;
     
-          console.log(node);
+          if (node.id() == "initial") {
+            cy.getElementById("initial_arrow").position({
+              x: node.position().x - 45,
+              y: node.position().y,
+            });
+          }
         });
 
         return () => cy.destroy();
     },[])
    
-    return {cy: instanceRef.current};
+    return instanceRef;
     }
