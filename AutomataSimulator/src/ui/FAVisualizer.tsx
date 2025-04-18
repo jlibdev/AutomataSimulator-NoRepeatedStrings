@@ -27,25 +27,32 @@ const FAVisualizer = ({
   const cyRef = useRef<HTMLDivElement>(null);
   const cyInstance = useRef<cytoscape.Core | null>(null);
 
+  let prev_path = "initial";
+  let current_index = 0;
+
+  console.log("Rerendered", prev_path, current_index);
+
+  const [isLive, setIsLive] = useState<boolean>(false);
+  const [isFocusing, setIsFocusing] = useState<boolean>(false);
+
   const handleNextState = (cy: cytoscape.Core | null) => {
     console.log("In 1 ", current_index, userInput.length);
-    if (cy && current_index < userInput.length) {
-      console.log("In 2 ", current_index, userInput.length);
-      const paths: Array<string> = [];
-      let current = "";
 
-      for (const item of userInput) {
-        current += item;
-        paths.push(current);
-      }
+    const paths: Array<string> = [];
+    let current = "";
 
-      const sorted_path = paths[current_index].split("").sort().join("");
-      const edge = cy.getElementById(prev_path + " - " + sorted_path);
-      const node = cy.getElementById(sorted_path);
-      const position = node.position();
-      edge.addClass("pathEdge");
-      node.addClass("pathNode");
+    for (const item of userInput) {
+      current += item;
+      paths.push(current);
+    }
 
+    if (!cy) return;
+
+    const sorted_path = paths[current_index].split("").sort().join("");
+    const edge = cy.getElementById(prev_path + " - " + sorted_path);
+    const node = cy.getElementById(sorted_path);
+    const position = node.position();
+    if (isFocusing) {
       cy.animate(
         {
           pan: {
@@ -60,6 +67,13 @@ const FAVisualizer = ({
           duration: 500,
         }
       );
+    }
+
+    if (current_index < userInput.length) {
+      console.log("In 2 ", current_index, userInput.length);
+
+      edge.addClass("pathEdge");
+      node.addClass("pathNode");
 
       if (
         inputString.length !== userInput.length &&
@@ -107,29 +121,26 @@ const FAVisualizer = ({
     const newNode = cy.getElementById(newPrevPath);
     const pos = newNode.position();
 
-    cy.animate(
-      {
-        pan: {
-          x: -pos.x + cy.width() / 2,
-          y: -pos.y + cy.height() / 2,
+    if (isFocusing) {
+      cy.animate(
+        {
+          pan: {
+            x: -pos.x + cy.width() / 2,
+            y: -pos.y + cy.height() / 2,
+          },
+          duration: 500,
         },
-        duration: 500,
-      },
-      {
-        center: { eles: newNode },
-        zoom: 1.5,
-        duration: 500,
-      }
-    );
+        {
+          center: { eles: newNode },
+          zoom: 1.5,
+          duration: 500,
+        }
+      );
+    }
 
     prev_path = newPrevPath;
     current_index = prev_path === "initial" ? 0 : current_index - 1;
   };
-
-  let prev_path = "initial";
-  let current_index = 0;
-
-  const [isLive, setIsLive] = useState<boolean>(false);
 
   useEffect(() => {
     if (!cyRef.current) return;
@@ -166,7 +177,7 @@ const FAVisualizer = ({
         edge.addClass("pathEdge");
         node.addClass("pathNode");
         if (inputString.length == userInput.length) {
-          // is_valid = true
+          current_index++;
         } else {
           if (path.length == userInput.length) {
             node.addClass("invalidState");
@@ -177,7 +188,6 @@ const FAVisualizer = ({
             });
           }
         }
-
         prev_path = sorted_path;
       });
     }
@@ -213,6 +223,7 @@ const FAVisualizer = ({
         >
           Full Model
         </button>
+
         <button
           type="button"
           className={clsx(
@@ -223,17 +234,17 @@ const FAVisualizer = ({
         >
           Live Visual
         </button>
+
         <button
           type="button"
-          className="rounded-2xl bg-slate-300 text-black px-2 font-display min-w-[150px] transition-all hover:scale-105 ease-in-out duration-300"
+          className={clsx(
+            "rounded-2xl   px-2 font-display min-w-[150px] transition-colors cursor-pall hover:scale-105 ease-in-out duration-300",
+            isFocusing ? "bg-primary text-white" : "bg-slate-300 text-black"
+          )}
+          onClick={() => setIsFocusing(!isFocusing)}
+          onDoubleClick={() => console.log("hello?")}
         >
           Focus to Current
-        </button>
-        <button
-          type="button"
-          className="rounded-2xl bg-slate-300 text-black px-2 font-display min-w-[150px] transition-all hover:scale-105 ease-in-out duration-300"
-        >
-          Zoom to View
         </button>
       </div>
       <div
@@ -247,9 +258,7 @@ const FAVisualizer = ({
         >
           <ChevronLeft />
         </button>
-        <button className="hover:scale-125 transition-transform ease-in-out duration-200">
-          <Play />
-        </button>
+
         <button
           className="hover:scale-125 transition-transform ease-in-out duration-200"
           onClick={() => handleNextState(cyInstance.current!)}

@@ -23,10 +23,6 @@ const LandingPage = () => {
 
   const [isFullModel, setIsFullModel] = useState<boolean>(false);
 
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-
-  const [isFocusing, setIsFocusing] = useState<boolean>(false);
-
   const handle_input_change = (value: string) => {
     const stringArray = value.split("");
 
