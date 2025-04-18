@@ -1,7 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Pause,
+  Play,
+  RotateCcw,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import { useCytoscapeFA } from "@/hooks/useCytoscapeFA";
@@ -20,6 +26,8 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
 
   // Get All Elements both states and transitions for the Model
   const { states, transitions } = useGetElements(userInput);
+
+  const [processString, setProcessString] = useState<string>("");
 
   //   States Definition
 
@@ -107,34 +115,14 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
         current_edge.target().id()
       );
 
+      handleStateTransitionAnimation();
+
       next_node.addClass("pathNode");
       currentState.current = next_node.id();
       currentIndex.current = Math.min(
         currentIndex.current + 1,
         userInput.length
       );
-
-      if (isAutoFocus) {
-        const current_node = cyRefInstance.current.getElementById(
-          currentState.current
-        );
-        const position = current_node.position();
-
-        cyRefInstance.current.animate(
-          {
-            pan: {
-              x: -position.x + cyRefInstance.current.width() / 2,
-              y: -position.y + cyRefInstance.current.height() / 2,
-            },
-            duration: 500,
-          },
-          {
-            center: { eles: current_node },
-            zoom: 1.5,
-            duration: 500,
-          }
-        );
-      }
 
       return true;
     } else {
@@ -146,27 +134,7 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
         node.getElementById(currentState.current).addClass("invalidState");
       }
 
-      if (isAutoFocus) {
-        const current_node = cyRefInstance.current.getElementById(
-          currentState.current
-        );
-        const position = current_node.position();
-
-        cyRefInstance.current.animate(
-          {
-            pan: {
-              x: -position.x + cyRefInstance.current.width() / 2,
-              y: -position.y + cyRefInstance.current.height() / 2,
-            },
-            duration: 500,
-          },
-          {
-            center: { eles: current_node },
-            zoom: 1.5,
-            duration: 500,
-          }
-        );
-      }
+      handleStateTransitionAnimation();
 
       return false;
     }
@@ -199,27 +167,7 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
         }
       });
 
-      if (isAutoFocus) {
-        const current_node = cyRefInstance.current.getElementById(
-          currentState.current
-        );
-        const position = current_node.position();
-
-        cyRefInstance.current.animate(
-          {
-            pan: {
-              x: -position.x + cyRefInstance.current.width() / 2,
-              y: -position.y + cyRefInstance.current.height() / 2,
-            },
-            duration: 500,
-          },
-          {
-            center: { eles: current_node },
-            zoom: 1.5,
-            duration: 500,
-          }
-        );
-      }
+      handleStateTransitionAnimation();
     }
   };
 
@@ -251,6 +199,84 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
     return () => clearInterval(interval);
   }, [isPlaying]);
 
+  const handleStateTransitionAnimation = () => {
+    if (!cyRefInstance.current) return;
+
+    const current_node = cyRefInstance.current.getElementById(
+      currentState.current
+    );
+    if (isAutoFocus) {
+      const position = current_node.position();
+
+      cyRefInstance.current.animate(
+        {
+          pan: {
+            x: -position.x + cyRefInstance.current.width() / 2,
+            y: -position.y + cyRefInstance.current.height() / 2,
+          },
+          duration: 500,
+        },
+        {
+          center: { eles: current_node },
+          zoom: 1.5,
+          duration: 500,
+          complete: () => {
+            current_node.animate(
+              { style: { width: 80, height: 80 } },
+              {
+                duration: 200,
+                easing: "ease-in",
+                complete: () => {
+                  setTimeout(() => {
+                    current_node.animate(
+                      { style: { width: 60, height: 60 } },
+                      { duration: 200, easing: "ease-out" }
+                    );
+                  }, 100);
+                },
+              }
+            );
+          },
+        }
+      );
+    } else {
+      current_node.animate(
+        { style: { width: 80, height: 80 } },
+        {
+          duration: 200,
+          easing: "ease-in",
+          complete: () => {
+            setTimeout(() => {
+              current_node.animate(
+                { style: { width: 60, height: 60 } },
+                { duration: 200, easing: "ease-out" }
+              );
+            }, 100);
+          },
+        }
+      );
+    }
+  };
+
+  const handleReplay = () => {
+    if (!cyRefInstance.current) return;
+    currentIndex.current = 0;
+    currentState.current = "initial";
+
+    cyRefInstance.current.nodes().map((node) => {
+      if (node.hasClass("pathNode") || node.hasClass("invalidState")) {
+        node.removeClass("pathNode invalidState");
+      }
+    });
+
+    cyRefInstance.current.edges().map((edge) => {
+      if (edge.hasClass("pathEdge") || edge.hasClass("invalidPath")) {
+        edge.removeClass("pathEdge invalidPath");
+      }
+    });
+
+    handleStateTransitionAnimation();
+  };
   return (
     <div className="flex flex-col gap-2">
       <Label>{`Input String : ${
@@ -263,6 +289,12 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
           </Button>
           <Button onClick={() => setIsPlaying(!isPlaying)}>
             {!isPlaying ? <Play></Play> : <Pause></Pause>}
+          </Button>
+          <Button
+            onClick={() => handleReplay()}
+            disabled={isPlaying || currentIndex.current != userInput.length}
+          >
+            <RotateCcw></RotateCcw>
           </Button>
           <Button onClick={() => gotoNextState()} disabled={isPlaying}>
             <ChevronRight></ChevronRight>
@@ -286,18 +318,23 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
           </Button>
         </div>
         <Separator orientation="vertical" />
-        <div className="flex items-center w-full justify-end gap-10 font-bold">
-          <span>{`State Count : ${states.length - 1}`}</span>
-          <span>{`Transition Count : ${transitions.length}`}</span>
-          <span>{`Selected State : ${
-            selectedNode ? selectedNode.label : "None"
-          }`}</span>
-          <span>{`Selected Transition : None`}</span>
-          {isStringValid(userInput) ? (
-            <span className="text-red-500 bold">Invalid</span>
-          ) : (
-            <span className="text-green-500 bold">Valid</span>
-          )}
+        <div className="flex w-full justify-between">
+          <div className="flex items-center w-full justify-end gap-10 font-bold">
+            <span>{`State Count : ${states.length - 1}`}</span>
+            <span>{`Transition Count : ${transitions.length}`}</span>
+            <span>{`Selected State : ${
+              selectedNode ? selectedNode.label : "None"
+            }`}</span>
+            {isStringValid(userInput) ? (
+              <span className="text-white bold bg-red-500 min-w-[100px] text-center rounded-full">
+                Invalid
+              </span>
+            ) : (
+              <span className="text-white bold bg-green-500 min-w-[100px] text-center rounded-full">
+                Valid
+              </span>
+            )}
+          </div>
         </div>
       </div>
       <div
