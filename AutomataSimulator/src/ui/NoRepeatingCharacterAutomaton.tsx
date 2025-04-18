@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { TypographyMuted } from "@/components/ui/typography";
 import { cn } from "@/lib/utils";
 import { Dispatch, SetStateAction } from "react";
+import VisualizerSheet from "./VisualizerSheet";
 
 interface NoRepeatingChracterAutomatonProps {
   userInput: string;
@@ -18,9 +18,9 @@ const NoRepeatingChracterAutomaton = ({
   setUserInput,
 }: NoRepeatingChracterAutomatonProps) => {
   return (
-    <section className="flex flex-col gap-2">
-      <Label htmlFor="userInput">Input String</Label>
-      <section className="grid grid-cols-6 gap-2">
+    <section className="flex flex-col gap-2 w-full">
+      <Label htmlFor="userInput">Input String:</Label>
+      <section className="flex flex-col gap-2">
         <Input
           id="userInput"
           placeholder="e.g. 0123456789"
@@ -38,9 +38,6 @@ const NoRepeatingChracterAutomaton = ({
             isValidInput ? "border-red-500" : "border-green-500"
           )}
         />
-        <Button variant={"ghost"} onClick={() => setUserInput("")}>
-          Clear
-        </Button>
         <section className="col-span-5 flex justify-end">
           {isValidInput ? (
             <Label htmlFor="userInput" className="text-red-500">
@@ -51,6 +48,15 @@ const NoRepeatingChracterAutomaton = ({
               Valid Input
             </Label>
           )}
+        </section>
+        <section className="flex gap-2">
+          <VisualizerSheet userInput={userInput}></VisualizerSheet>
+          <Button
+            variant={isValidInput ? "destructive" : "ghost"}
+            onClick={() => setUserInput("")}
+          >
+            Clear
+          </Button>
         </section>
       </section>
     </section>

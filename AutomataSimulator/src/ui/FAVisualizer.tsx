@@ -3,7 +3,7 @@ import { Dispatch, useEffect, useRef, useState } from "react";
 import { styleSheet } from "../cytoscape/style";
 import clsx from "clsx";
 import { inputStringType } from "../types/AutomatonTypes";
-import { ChevronLeft, ChevronRight, Play } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type FAVisualizerProps = {
   states: Array<ElementDefinition>;
@@ -29,8 +29,6 @@ const FAVisualizer = ({
 
   let prev_path = "initial";
   let current_index = 0;
-
-  console.log("Rerendered", prev_path, current_index);
 
   const [isLive, setIsLive] = useState<boolean>(false);
   const [isFocusing, setIsFocusing] = useState<boolean>(false);

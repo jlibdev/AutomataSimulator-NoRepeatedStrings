@@ -17,3 +17,4 @@ export function getAllCharacterFromMax(digits : string){
 
   return all_digits
 }
+

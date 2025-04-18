@@ -1,11 +1,15 @@
-import { TypographyH1, TypographyH2 } from "@/components/ui/typography";
+import { TypographyH1 } from "@/components/ui/typography";
+import Header from "@/ui/Header";
 import NoRepeatingChracterAutomaton from "@/ui/NoRepeatingCharacterAutomaton";
+import OutputSimulator from "@/ui/OutputSimulator";
 import { isStringValid } from "@/utils/Validators";
 import { useEffect, useState } from "react";
 
 const HomePage = () => {
+  // States
   const [userInput, setUserInput] = useState<string>("");
   const [isValidInput, setIsValidInput] = useState<boolean>(true);
+  const [outputToggle, setOutputToggle] = useState<boolean>(true);
 
   const handleInputChange = (value: string) => {
     setUserInput(value);
@@ -16,21 +20,21 @@ const HomePage = () => {
   }, [userInput]);
 
   return (
-    <div className="flex flex-col items-center w-screen h-screen justify-between gap-5 mt-5">
-      <div className="flex flex-col">
-        <TypographyH1>Automaton Simulator</TypographyH1>
-        <TypographyH2 className="text-muted-foreground text-sm flex justify-between">
-          <span>Automata project</span>
-          <span>BETA</span>
-        </TypographyH2>
-      </div>
-      <div className="flex flex-col gap-5 min-w-[500px] h-full justify-center">
-        <NoRepeatingChracterAutomaton
-          handleInputChange={handleInputChange}
-          isValidInput={isValidInput}
-          setUserInput={setUserInput}
-          userInput={userInput}
-        />
+    <div className="h-screen w-screen">
+      <Header outputToggle={outputToggle} setOutputToggle={setOutputToggle} />
+      <div className="w-full h-[93%] grid grid-cols-2 items-center">
+        <div className="flex flex-col gap-2 p-10 border-r justify-center">
+          <TypographyH1 className="lg:text-2xl text-2xl">
+            {"STRINGS WITH NO REPEATING CHARACTERS"}
+          </TypographyH1>
+          <NoRepeatingChracterAutomaton
+            handleInputChange={handleInputChange}
+            isValidInput={isValidInput}
+            setUserInput={setUserInput}
+            userInput={userInput}
+          />
+        </div>
+        <OutputSimulator inputString={userInput} isValidInput={isValidInput}></OutputSimulator>
       </div>
     </div>
   );

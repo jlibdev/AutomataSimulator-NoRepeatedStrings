@@ -1,23 +1,22 @@
-import { Button } from "@/components/ui/button";
+import { TypographyH1, TypographyH2 } from "@/components/ui/typography";
+import { AutomatonActionProps } from "./AutomatonAction";
 
-const Header = () => {
+interface HeaderProps extends AutomatonActionProps {}
+
+const Header = ({}: HeaderProps) => {
   return (
-    <header className="shadow-sm p-2 flex justify-around items-center">
+    <header className="shadow-sm flex justify-around h-[7%]">
       <title>Automaton Simulator</title>
-      <section id="web_name" className="flex flex-col">
-        <h1 className="text-text font-bold">AUTOMATON SIMULATOR</h1>
-        <p className="text-primary text-sm">
-          Strings with no repeated character
-        </p>
+      <section className="w-fit">
+        <TypographyH1 className="lg:text-2xl text-2xl">
+          Automaton Simulator
+        </TypographyH1>
+        <TypographyH2 className="text-muted-foreground text-sm flex justify-between border-none">
+          <span className="text-primary">Automata project</span>
+          <span>BETA</span>
+        </TypographyH2>
       </section>
-      <section id="actions" className="flex gap-5">
-        <Button>Enter</Button>
-        <Button>Enter</Button>
-        <Button>Enter</Button>
-        <Button>Enter</Button>
-        <Button>Enter</Button>
-        <Button>Enter</Button>
-      </section>
+      <section className="w-fit flex justify-center items-center"></section>
     </header>
   );
 };
