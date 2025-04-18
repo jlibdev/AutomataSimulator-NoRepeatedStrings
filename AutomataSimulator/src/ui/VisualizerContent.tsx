@@ -29,6 +29,10 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
   //   State for toggle of grababble nodes
   const [isGrababble, setIsGrababble] = useState<boolean>(true);
 
+  //   State for toggle Auto Focus to current state
+
+  const [isAutoFocus, setIsAutoFocus] = useState<boolean>(true);
+
   //   State for storing selected node on the FA
 
   const [selectedNode, setSelectedNode] = useState<{
@@ -109,6 +113,29 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
         currentIndex.current + 1,
         userInput.length
       );
+
+      if (isAutoFocus) {
+        const current_node = cyRefInstance.current.getElementById(
+          currentState.current
+        );
+        const position = current_node.position();
+
+        cyRefInstance.current.animate(
+          {
+            pan: {
+              x: -position.x + cyRefInstance.current.width() / 2,
+              y: -position.y + cyRefInstance.current.height() / 2,
+            },
+            duration: 500,
+          },
+          {
+            center: { eles: current_node },
+            zoom: 1.5,
+            duration: 500,
+          }
+        );
+      }
+
       return true;
     } else {
       if (!isStringValid(userInput)) {
@@ -117,6 +144,28 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
           edge.addClass("invalidPath");
         });
         node.getElementById(currentState.current).addClass("invalidState");
+      }
+
+      if (isAutoFocus) {
+        const current_node = cyRefInstance.current.getElementById(
+          currentState.current
+        );
+        const position = current_node.position();
+
+        cyRefInstance.current.animate(
+          {
+            pan: {
+              x: -position.x + cyRefInstance.current.width() / 2,
+              y: -position.y + cyRefInstance.current.height() / 2,
+            },
+            duration: 500,
+          },
+          {
+            center: { eles: current_node },
+            zoom: 1.5,
+            duration: 500,
+          }
+        );
       }
 
       return false;
@@ -149,9 +198,47 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
           }
         }
       });
+
+      if (isAutoFocus) {
+        const current_node = cyRefInstance.current.getElementById(
+          currentState.current
+        );
+        const position = current_node.position();
+
+        cyRefInstance.current.animate(
+          {
+            pan: {
+              x: -position.x + cyRefInstance.current.width() / 2,
+              y: -position.y + cyRefInstance.current.height() / 2,
+            },
+            duration: 500,
+          },
+          {
+            center: { eles: current_node },
+            zoom: 1.5,
+            duration: 500,
+          }
+        );
+      }
     }
   };
 
+  const handleFitModel = () => {
+    cyRefInstance.current?.ready(() =>
+      cyRefInstance.current?.animate({
+        fit: {
+          eles: cyRefInstance.current.elements(),
+          padding: 50,
+        },
+        duration: 1000,
+        easing: "ease-in-out",
+      })
+    );
+  };
+
+  const handleAutoFocus = () => {
+    setIsAutoFocus(!isAutoFocus);
+  };
   useEffect(() => {
     if (!isPlaying) return;
 
@@ -171,20 +258,29 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
       }`}</Label>
       <div id="Actions" className="flex gap-2 h-10">
         <div className="flex gap-2 items-center">
-          <Button onClick={() => gotoPrevState()}>
+          <Button onClick={() => gotoPrevState()} disabled={isPlaying}>
             <ChevronLeft />
           </Button>
           <Button onClick={() => setIsPlaying(!isPlaying)}>
             {!isPlaying ? <Play></Play> : <Pause></Pause>}
           </Button>
-          <Button onClick={() => gotoNextState()}>
+          <Button onClick={() => gotoNextState()} disabled={isPlaying}>
             <ChevronRight></ChevronRight>
           </Button>
-          <Button>Zoom Out</Button>
-          <Button>Auto Focus</Button>
+          <Button onClick={() => handleFitModel()} disabled={isPlaying}>
+            Fit Model
+          </Button>
+          <Button
+            variant={isAutoFocus ? "default" : "outline"}
+            onClick={() => handleAutoFocus()}
+            disabled={isPlaying}
+          >
+            Auto Focus
+          </Button>
           <Button
             variant={isGrababble ? "default" : "outline"}
             onClick={() => handleClickGrabble()}
+            disabled={isPlaying}
           >
             Grabbable
           </Button>
