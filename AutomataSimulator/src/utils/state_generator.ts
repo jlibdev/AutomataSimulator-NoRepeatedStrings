@@ -2,38 +2,49 @@ import { ElementDefinition } from "cytoscape";
 import { isSubset, stringDifference } from "./sets";
 
 export function normalizeElementPositions(states: Array<ElementDefinition>) {
-    let prev_len = 0;
-    let current_y = 0;
+  let prev_len = 0;
+  let current_y = 0;
+  let current_x = 0;
 
-    const positions = states.map(state => state.position?.y).filter((y): y is number => y !== undefined);
+  const positions = states.map(state => state.position?.y).filter((y): y is number => y !== undefined);
 
-    
-    if (positions.length === 0) return;
-  
-    const maxY = Math.max(...positions);
-  
-    states.forEach((state) => {
-      if (!state.position) return;
-  
-      const idLength = state.data?.id?.length ?? 1;
-  
-      if (state.data.id === "initial") {
-        state.position.y = maxY / 2;
-        return;
-      }
-  
-      if (prev_len !== idLength) {
-        const countSameLength = states.filter(s => s.data?.id?.length === idLength).length;
-        const y_increment = maxY / (countSameLength + 1);
-        current_y = y_increment;
-      }
-  
-      state.position.y = current_y;
-      current_y += maxY / (states.filter(s => s.data?.id?.length === idLength).length + 1);
-  
-      prev_len = idLength;
-    });
-  }
+  if (positions.length === 0) return;
+
+  const maxY = Math.max(...positions);
+
+  const uniqueXPositions = Array.from(new Set(states.map(state => state.position?.x).filter(x => x !== undefined)));
+  const maxX = uniqueXPositions.length > 0 ? Math.max(...uniqueXPositions) : 0;
+
+
+  const x_increment = maxX ? maxX / (uniqueXPositions.length + 1) : 0;
+
+  states.forEach((state) => {
+    if (!state.position) return;
+
+    const idLength = state.data?.id?.length ?? 1;
+
+    if (state.data.id === "initial") {
+      state.position.y = maxY / 2;
+      return;
+    }
+
+    if (prev_len !== idLength) {
+      const countSameLength = states.filter(s => s.data?.id?.length === idLength).length;
+      const y_increment = maxY / (countSameLength + 1);
+      current_y = y_increment;
+    }
+
+    state.position.y = current_y;
+    state.position.x = current_x;
+
+    current_x += x_increment;
+
+    current_y += maxY / (states.filter(s => s.data?.id?.length === idLength).length + 1);
+
+    prev_len = idLength;
+  });
+}
+
   
 
 

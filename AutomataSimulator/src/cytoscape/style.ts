@@ -6,9 +6,9 @@ export const styleSheet : Array<StylesheetStyle> = [
         style: {
           backgroundColor: "#fff",
           color: "#000",
-          width: 60,
-          height: 60,
-          "font-size": "30px",
+          width: 200,
+          height: 200,
+          "font-size": "100px",
           "text-valign": "center",
           "text-halign": "center",
         },
@@ -31,7 +31,7 @@ export const styleSheet : Array<StylesheetStyle> = [
             "arrow-scale": 2,
             "target-arrow-color": "#999",
             "text-rotation": "autorotate",
-            "font-size": "30px",
+            "font-size": "100px",
         }
     },
     {

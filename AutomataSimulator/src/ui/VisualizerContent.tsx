@@ -2,9 +2,10 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import {
-  ArrowRight,
+  ArrowDownToLine,
   ChevronLeft,
   ChevronRight,
+  Maximize2,
   MoveRight,
   Pause,
   Play,
@@ -36,10 +37,10 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
   //   State for pressing the play button
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
-  const [showPath, setShowPath] = useState<boolean>(true);
+  const [showPath, setShowPath] = useState<boolean>(false);
 
   //   State for toggle of grababble nodes
-  const [isGrababble, setIsGrababble] = useState<boolean>(true);
+  const [isGrababble, setIsGrababble] = useState<boolean>(false);
 
   //   State for toggle Auto Focus to current state
 
@@ -162,6 +163,7 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
       });
 
       handleStateTransitionAnimation();
+      setPaths(getPath(cyRefInstance.current, userInput, currentState.current));
     }
   };
 
@@ -216,14 +218,14 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
           duration: 500,
           complete: () => {
             current_node.animate(
-              { style: { width: 80, height: 80 } },
+              { style: { width: 220, height: 220 } },
               {
                 duration: 200,
                 easing: "ease-in",
                 complete: () => {
                   setTimeout(() => {
                     current_node.animate(
-                      { style: { width: 60, height: 60 } },
+                      { style: { width: 200, height: 200 } },
                       { duration: 200, easing: "ease-out" }
                     );
                   }, 100);
@@ -235,14 +237,14 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
       );
     } else {
       current_node.animate(
-        { style: { width: 80, height: 80 } },
+        { style: { width: 220, height: 220 } },
         {
           duration: 200,
           easing: "ease-in",
           complete: () => {
             setTimeout(() => {
               current_node.animate(
-                { style: { width: 60, height: 60 } },
+                { style: { width: 200, height: 200 } },
                 { duration: 200, easing: "ease-out" }
               );
             }, 100);
@@ -299,6 +301,64 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
 
     handleStateTransitionAnimation();
   };
+
+  const exportToJff = () => {
+    const lines = [
+      '<?xml version="1.0" encoding="UTF-8" standalone="no"?>',
+      "<structure>&#13;",
+      "\t<type>fa</type>&#13;",
+      "\t<automaton>&#13;",
+    ];
+
+    const jflap_ids_list: Array<string> = [];
+
+    if (cyRefInstance.current) {
+      const cy = cyRefInstance.current;
+      let count = 0;
+      cy.nodes().map((node) => {
+        if (node.id() != "initial_arrow") {
+          lines.push(`\t\t<state id="${count}" name="${"q" + count}">&#13;`);
+          lines.push(`\t\t\t<x>${node.position().x}</x>&#13;`);
+          lines.push(`\t\t\t<y>${node.position().y}</y>&#13;`);
+          if (node.hasClass("initial")) {
+            lines.push(`\t\t\t<initial/>&#13;`);
+          }
+          if (node.hasClass("final")) {
+            lines.push(`\t\t\t<final/>&#13;`);
+          }
+          lines.push(`</state>&#13;`);
+          jflap_ids_list.push(node.id());
+          count++;
+        }
+      });
+
+      cy.edges().map((edge) => {
+        lines.push(`\t\t<transition>&#13;`);
+        lines.push(
+          `\t\t\t<from>${jflap_ids_list.indexOf(
+            edge.source().id()
+          )}</from>&#13;`,
+          `\t\t\t<to>${jflap_ids_list.indexOf(edge.target().id())}</to>&#13;`,
+          `\t\t\t<read>${edge.data().label}</read>&#13;`,
+          `\t\t</transition>&#13;`
+        );
+      });
+    }
+
+    lines.push("\t</automaton>&#13;", "</structure>");
+
+    const fileContent = lines.join("\n"); // Join array into single string with new lines
+    const blob = new Blob([fileContent], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "export.jff";
+    link.click();
+
+    URL.revokeObjectURL(url); // Clean up the URL object
+  };
+
   return (
     <div className="flex flex-col gap-2">
       <Label>{`Input String : ${
@@ -321,8 +381,11 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
           <Button onClick={() => gotoNextState()} disabled={isPlaying}>
             <ChevronRight></ChevronRight>
           </Button>
+          <Button onClick={() => exportToJff()} disabled={isPlaying}>
+            <ArrowDownToLine></ArrowDownToLine>
+          </Button>
           <Button onClick={() => handleFitModel()} disabled={isPlaying}>
-            Fit Model
+            <Maximize2></Maximize2>
           </Button>
           <Button
             variant={isAutoFocus ? "default" : "outline"}
