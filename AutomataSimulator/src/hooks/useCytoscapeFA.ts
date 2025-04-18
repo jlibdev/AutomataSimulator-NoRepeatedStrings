@@ -36,14 +36,26 @@ export const useCytoscapeFA = (
         instanceRef.current = cy;
 
         cy.on("select", "node", function (evt) {
-          const node = evt.target;
+          const node = evt.target as cytoscape.NodeSingular;
           node.addClass("selectedNode");
+          node.outgoers("edge").forEach(edge => {
+            const targetNode = edge.target();
+            edge.addClass("selectedEdge");
+            targetNode.addClass("selectedNode")
+          });
+          
           setSelectedNode(node.data().id)
         });
 
         cy.on("unselect", "node", function (evt) {
-          const node = evt.target;
+          const node = evt.target as cytoscape.NodeSingular;;
           node.removeClass("selectedNode");
+          node.outgoers("edge").forEach(edge => {
+            const targetNode = edge.target();
+            edge.removeClass("selectedEdge");
+            targetNode.removeClass("selectedNode")
+          });
+
           setSelectedNode(null)
         });
 
