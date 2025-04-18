@@ -20,16 +20,20 @@ import { getPath } from "@/utils/cytoscape_functions";
 
 export interface VisualizerContentProps {
   userInput: string;
+  isFullModel: boolean;
 }
 
-const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
+const VisualizerContent = ({
+  userInput,
+  isFullModel,
+}: VisualizerContentProps) => {
   const cyRef = useRef<HTMLDivElement>(null);
 
   const currentIndex = useRef<number>(0);
   const currentState = useRef<string>("initial");
 
   // Get All Elements both states and transitions for the Model
-  const { states, transitions } = useGetElements(userInput);
+  const { states, transitions } = useGetElements(userInput, isFullModel);
   //   States Definition
 
   const [paths, setPaths] = useState<Array<string>>(["q0"]);
@@ -353,7 +357,9 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
 
     const link = document.createElement("a");
     link.href = url;
-    link.download = "export.jff";
+    link.download = `strings-with-no-repating-over-0-9-model-0-${
+      isFullModel ? "9" : userInput.length
+    }.jff`;
     link.click();
 
     URL.revokeObjectURL(url); // Clean up the URL object

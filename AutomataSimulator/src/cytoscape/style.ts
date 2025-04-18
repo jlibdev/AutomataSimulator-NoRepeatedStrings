@@ -46,8 +46,8 @@ export const styleSheet : Array<StylesheetStyle> = [
         selector : "#initial_arrow",
         style: {
             shape : "tag",
-            width: 20,
-            height: 30,
+            width: 100,
+            height: 150,
             "border-width" : "0px",
             "z-index": -1,
         }

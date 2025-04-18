@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import VisualizerSheet from "./VisualizerSheet";
 
 interface NoRepeatingChracterAutomatonProps {
@@ -17,6 +17,8 @@ const NoRepeatingChracterAutomaton = ({
   isValidInput,
   setUserInput,
 }: NoRepeatingChracterAutomatonProps) => {
+  const [isFullModel, setisFullModel] = useState<boolean>(false);
+
   return (
     <section className="flex flex-col gap-2 w-full">
       <Label htmlFor="userInput">Input String:</Label>
@@ -50,7 +52,16 @@ const NoRepeatingChracterAutomaton = ({
           )}
         </section>
         <section className="flex gap-2">
-          <VisualizerSheet userInput={userInput}></VisualizerSheet>
+          <VisualizerSheet
+            userInput={userInput}
+            isFullModel={isFullModel}
+          ></VisualizerSheet>
+          <Button
+            onClick={() => setisFullModel(!isFullModel)}
+            variant={isFullModel ? "default" : "outline"}
+          >
+            {isFullModel ? "Disable Full Model" : "Enable Full Model"}
+          </Button>
           <Button
             variant={isValidInput ? "destructive" : "ghost"}
             onClick={() => setUserInput("")}

@@ -35,7 +35,10 @@ export function normalizeElementPositions(states: Array<ElementDefinition>) {
     }
 
     state.position.y = current_y;
-    state.position.x = current_x;
+    if(state.data.id != "initial_arrow"){
+      state.position.x = current_x;
+    }
+    
 
     current_x += x_increment;
 
@@ -61,7 +64,7 @@ export function generateFAElements(combinations : Array<string>){
         classes: "initial final"
       },
       {
-        data : {id: "initial_arrow"}, position : {x: -45 , y: 0}, grabbable : false
+        data : {id: "initial_arrow"}, position : {x: -155 , y: 0}, grabbable : false
       }
      ]
 

@@ -11,9 +11,11 @@ import {
 } from "@/components/ui/sheet";
 import VisualizerContent, { VisualizerContentProps } from "./VisualizerContent";
 
-interface VisualizerSheetProps extends VisualizerContentProps {}
+interface VisualizerSheetProps extends VisualizerContentProps {
+  isFullModel : boolean
+}
 
-const VisualizerSheet = ({ userInput }: VisualizerSheetProps) => {
+const VisualizerSheet = ({ userInput, isFullModel }: VisualizerSheetProps) => {
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -27,7 +29,7 @@ const VisualizerSheet = ({ userInput }: VisualizerSheetProps) => {
           </SheetDescription>
         </SheetHeader>
         <div className="px-5">
-          <VisualizerContent userInput={userInput}></VisualizerContent>
+          <VisualizerContent userInput={userInput} isFullModel={isFullModel}></VisualizerContent>
         </div>
         <SheetFooter>
           <SheetClose asChild>

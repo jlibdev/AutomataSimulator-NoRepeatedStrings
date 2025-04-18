@@ -52,7 +52,7 @@ export const useCytoscapeFA = (
     
           if (node.id() == "initial") {
             cy.getElementById("initial_arrow").position({
-              x: node.position().x - 45,
+              x: node.position().x - 600,
               y: node.position().y,
             });
           }
