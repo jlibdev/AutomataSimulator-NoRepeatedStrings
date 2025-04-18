@@ -107,5 +107,26 @@ export const styleSheet : Array<StylesheetStyle> = [
             "transition-property": "line-color",
             "transition-duration": 0.3
         }
-    }
+    },
+    {
+        selector : ".selectedNode",
+        style: {
+            backgroundColor : "#7f22fe",
+            color: "#fff",
+            
+        }
+    },
+    {
+        selector : ".selectedEdge",
+        style: {
+            color: "#fff",
+            "text-outline-color" : "#000",
+            "text-outline-width" : "4px",
+            "line-color": "#7f22fe",
+            "target-arrow-color" : "#7f22fe",
+            width: 4,
+            "transition-property": "line-color",
+            "transition-duration": 0.3
+        }
+    },
 ]

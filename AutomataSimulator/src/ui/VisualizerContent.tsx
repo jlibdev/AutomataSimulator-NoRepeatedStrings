@@ -2,8 +2,10 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import {
+  ArrowRight,
   ChevronLeft,
   ChevronRight,
+  MoveRight,
   Pause,
   Play,
   RotateCcw,
@@ -13,6 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import { useCytoscapeFA } from "@/hooks/useCytoscapeFA";
 import { useGetElements } from "@/hooks/useGetElements";
 import { isStringValid } from "@/utils/Validators";
+import { getPath } from "@/utils/cytoscape_functions";
 
 export interface VisualizerContentProps {
   userInput: string;
@@ -26,13 +29,14 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
 
   // Get All Elements both states and transitions for the Model
   const { states, transitions } = useGetElements(userInput);
-
-  const [processString, setProcessString] = useState<string>("");
-
   //   States Definition
+
+  const [paths, setPaths] = useState<Array<string>>(["q0"]);
 
   //   State for pressing the play button
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+
+  const [showPath, setShowPath] = useState<boolean>(true);
 
   //   State for toggle of grababble nodes
   const [isGrababble, setIsGrababble] = useState<boolean>(true);
@@ -43,19 +47,7 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
 
   //   State for storing selected node on the FA
 
-  const [selectedNode, setSelectedNode] = useState<{
-    id: string;
-    label: string;
-  } | null>(null);
-
-  //   Event function for selecting a node in the model
-  const handleNodeSelect = (id: string, label: string) => {
-    if (selectedNode?.id === id) {
-      setSelectedNode(null);
-    } else {
-      setSelectedNode({ id, label });
-    }
-  };
+  const [selectedNode, setSelectedNode] = useState<string | null>(null);
 
   //   Instance initialization for cytoscape . Generates the FA MODEL
 
@@ -64,7 +56,7 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
     layoutName: "preset",
     states: states,
     transitions: transitions,
-    handleNodeSelect,
+    setSelectedNode,
   });
 
   //   UseEffect that enables / disables the nodes ability to be grabbed by the user
@@ -115,14 +107,16 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
         current_edge.target().id()
       );
 
-      handleStateTransitionAnimation();
-
       next_node.addClass("pathNode");
       currentState.current = next_node.id();
       currentIndex.current = Math.min(
         currentIndex.current + 1,
         userInput.length
       );
+
+      handleStateTransitionAnimation();
+
+      setPaths(getPath(cyRefInstance.current, userInput, currentState.current));
 
       return true;
     } else {
@@ -258,6 +252,34 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
     }
   };
 
+  const panToState = (id: string) => {
+    const cy = cyRefInstance.current;
+    if (!cy) return;
+
+    cy.nodes().forEach((node) => {
+      if (node.data().label === id) {
+        const position = node.position();
+        const panX = -position.x + cy.width() / 2;
+        const panY = -position.y + cy.height() / 2;
+
+        cy.animate({
+          pan: {
+            x: panX,
+            y: panY,
+          },
+          center: {
+            eles: node,
+          },
+          zoom: 1.5,
+          duration: 500,
+          easing: "ease-out",
+        });
+
+        return;
+      }
+    });
+  };
+
   const handleReplay = () => {
     if (!cyRefInstance.current) return;
     currentIndex.current = 0;
@@ -316,15 +338,27 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
           >
             Grabbable
           </Button>
+          <Button
+            variant={showPath ? "default" : "outline"}
+            onClick={() => setShowPath(!showPath)}
+          >
+            Show Paths
+          </Button>
         </div>
         <Separator orientation="vertical" />
         <div className="flex w-full justify-between">
           <div className="flex items-center w-full justify-end gap-10 font-bold">
             <span>{`State Count : ${states.length - 1}`}</span>
             <span>{`Transition Count : ${transitions.length}`}</span>
-            <span>{`Selected State : ${
-              selectedNode ? selectedNode.label : "None"
-            }`}</span>
+            <span>
+              {`Selected State: ${
+                selectedNode
+                  ? cyRefInstance.current?.getElementById(selectedNode)?.data()
+                      ?.label
+                  : "None"
+              }`}
+            </span>
+
             {isStringValid(userInput) ? (
               <span className="text-white bold bg-red-500 min-w-[100px] text-center rounded-full">
                 Invalid
@@ -337,10 +371,32 @@ const VisualizerContent = ({ userInput }: VisualizerContentProps) => {
           </div>
         </div>
       </div>
-      <div
-        ref={cyRef}
-        className={cn("w-full h-[500px] rounded-md border-2 bg-slate-600")}
-      />
+      <div className="w-full grid grid-cols-6 gap-5">
+        <div
+          ref={cyRef}
+          className={cn(
+            "w-full h-[500px] rounded-md border-2 bg-slate-600",
+            showPath ? "col-span-5" : "col-span-6"
+          )}
+        />
+
+        {showPath && (
+          <div className="border py-5 flex flex-col gap-5">
+            <Label className="px-5">Current Node Path:</Label>
+            <div className="flex gap-2 flex-wrap  h-fit justify-center">
+              {paths.map((path) => (
+                <Button
+                  className="rounded-full w-fit min-w-[80px] animate-in"
+                  onClick={() => panToState(path)}
+                >
+                  {path}
+                  <MoveRight size={15}></MoveRight>
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

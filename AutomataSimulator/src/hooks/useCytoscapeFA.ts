@@ -1,13 +1,13 @@
 import { styleSheet } from "@/cytoscape/style";
 import cytoscape, { Core, ElementDefinition } from "cytoscape";
-import { useEffect, useRef } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 
 interface useCytoscapeFATypes {
     containerRef: React.RefObject<HTMLDivElement | null>,
     states: ElementDefinition[],
     transitions: ElementDefinition[],
     layoutName: "preset"| "circle" | "concentric" | "cose" | "grid" | "random",
-    handleNodeSelect : (id : string , label: string) => void
+    setSelectedNode : Dispatch<SetStateAction<string | null>>
 }
 
 export const useCytoscapeFA = (
@@ -15,7 +15,7 @@ export const useCytoscapeFA = (
     states,
     transitions,
     layoutName = "preset",
-    handleNodeSelect
+    setSelectedNode
   }:useCytoscapeFATypes
   ) =>
     {
@@ -37,7 +37,14 @@ export const useCytoscapeFA = (
 
         cy.on("select", "node", function (evt) {
           const node = evt.target;
-          handleNodeSelect(node.data().id , node.data().label)
+          node.addClass("selectedNode");
+          setSelectedNode(node.data().id)
+        });
+
+        cy.on("unselect", "node", function (evt) {
+          const node = evt.target;
+          node.removeClass("selectedNode");
+          setSelectedNode(null)
         });
 
         cy.on("drag", "node", function (evt) {

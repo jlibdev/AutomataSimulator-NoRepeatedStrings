@@ -14,3 +14,15 @@ export function useGetElements(userInput : string)
     return {states : elements.states , transitions : elements.transitions}
     
 }
+
+export function useGetAllElements()
+{
+    const all_digits = getAllCharacterFromMax("09");
+
+    const all_combinations = getAllCombinations(all_digits);
+
+    const elements = generateFAElements(all_combinations);
+
+    return {states : elements.states , transitions : elements.transitions}
+    
+}
