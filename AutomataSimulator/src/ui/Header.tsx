@@ -5,7 +5,7 @@ interface HeaderProps extends AutomatonActionProps {}
 
 const Header = ({}: HeaderProps) => {
   return (
-    <header className="shadow-sm flex justify-around h-[7%]">
+    <header className="shadow-sm flex justify-around h-[10%] md:h-[7%] items-center">
       <title>Automaton Simulator</title>
       <section className="w-fit">
         <TypographyH1 className="lg:text-2xl text-2xl">
