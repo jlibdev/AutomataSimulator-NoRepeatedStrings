@@ -15,8 +15,10 @@ import { useEffect, useRef, useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import { useCytoscapeFA } from "@/hooks/useCytoscapeFA";
 import { useGetElements } from "@/hooks/useGetElements";
-import { isStringValid } from "@/utils/Validators";
+import { getValidString, isStringValid } from "@/utils/Validators";
 import { getPath } from "@/utils/cytoscape_functions";
+import DownloadDropDown from "./DownloadDropDown";
+import { getAllCharacterFromMax } from "../utils/sets";
 
 export interface VisualizerContentProps {
   userInput: string;
@@ -306,7 +308,8 @@ const VisualizerContent = ({
     handleStateTransitionAnimation();
   };
 
-  const exportToJff = () => {
+  const exportToJff = (event: Event) => {
+    event.preventDefault();
     const lines = [
       '<?xml version="1.0" encoding="UTF-8" standalone="no"?>',
       "<structure>&#13;",
@@ -351,7 +354,7 @@ const VisualizerContent = ({
 
     lines.push("\t</automaton>&#13;", "</structure>");
 
-    const fileContent = lines.join("\n"); // Join array into single string with new lines
+    const fileContent = lines.join("\n");
     const blob = new Blob([fileContent], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
 
@@ -362,11 +365,93 @@ const VisualizerContent = ({
     }.jff`;
     link.click();
 
-    URL.revokeObjectURL(url); // Clean up the URL object
+    URL.revokeObjectURL(url);
+  };
+
+  const exportToPNG = (event: Event) => {
+    event.preventDefault();
+    const cy = cyRefInstance.current;
+    if (!cy) return;
+
+    const maxLen = getAllCharacterFromMax(isFullModel ? "9" : userInput).length;
+    let scale = 1;
+
+    if (maxLen < 5) {
+      scale = 5;
+    } else if (maxLen < 8) {
+      scale = 12;
+    } else {
+      scale = 15;
+    }
+    const pngData = cy.png({
+      scale: scale,
+    });
+
+    const byteCharacters = atob(pngData.split(",")[1]);
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
+      const slice = byteCharacters.slice(offset, offset + 1024);
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
+    }
+
+    const blob = new Blob(byteArrays, { type: "image/png" });
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "String_with_no_repeating_character_model.png";
+    link.click();
+  };
+
+  const exportToJPEG = (event: Event) => {
+    event.preventDefault();
+    const cy = cyRefInstance.current;
+    if (!cy) return;
+
+    const maxLen = getAllCharacterFromMax(isFullModel ? "9" : userInput).length;
+    let scale = 1;
+
+    if (maxLen < 5) {
+      scale = 5;
+    } else if (maxLen < 8) {
+      scale = 12;
+    } else {
+      scale = 15;
+    }
+
+    const jpegData = cy.jpeg({
+      scale: scale,
+    });
+
+    const link = document.createElement("a");
+    link.href = jpegData;
+    link.download = "cytoscape_model.jpeg";
+    link.click();
+  };
+
+  const exportToJSON = (event: Event) => {
+    event.preventDefault();
+    const cy = cyRefInstance.current;
+    if (!cy) return;
+
+    const jsonData = cy.json();
+
+    const blob = new Blob([JSON.stringify(jsonData)], {
+      type: "application/json",
+    });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "cytoscape_model.json";
+    link.click();
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 ">
       <Label>{`Input String : ${
         userInput.length > 0 ? userInput : "Empty String"
       }`}</Label>
@@ -387,9 +472,19 @@ const VisualizerContent = ({
           <Button onClick={() => gotoNextState()} disabled={isPlaying}>
             <ChevronRight></ChevronRight>
           </Button>
-          <Button onClick={() => exportToJff()} disabled={isPlaying}>
-            <ArrowDownToLine></ArrowDownToLine>
-          </Button>
+          <DownloadDropDown
+            items={[
+              { name: "JFLAP File (.jff)", onSelectFn: exportToJff },
+              { name: "PNG File (.png)", onSelectFn: exportToPNG },
+              { name: "JPEG File (.jpeg)", onSelectFn: exportToJPEG },
+              { name: "JSON File (.json)", onSelectFn: exportToJSON },
+            ]}
+          >
+            <Button disabled={isPlaying}>
+              <ArrowDownToLine></ArrowDownToLine>
+            </Button>
+          </DownloadDropDown>
+
           <Button onClick={() => handleFitModel()} disabled={isPlaying}>
             <Maximize2></Maximize2>
           </Button>
