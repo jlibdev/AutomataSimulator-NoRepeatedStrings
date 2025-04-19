@@ -48,7 +48,9 @@ const OutputSimulator = ({
           </TypographyH1>
         ))}
         {inputArray.length == 0 && (
-          <TypographyH1 className="text-green-400">EMPTY STRING</TypographyH1>
+          <TypographyH1 className="text-green-400 text-center">
+            EMPTY STRING
+          </TypographyH1>
         )}
       </div>
     </div>

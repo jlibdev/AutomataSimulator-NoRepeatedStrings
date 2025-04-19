@@ -51,7 +51,7 @@ const NoRepeatingChracterAutomaton = ({
             </Label>
           )}
         </section>
-        <section className="flex gap-2">
+        <section className="flex gap-2 flex-wrap">
           <VisualizerSheet
             userInput={userInput}
             isFullModel={isFullModel}
@@ -59,12 +59,14 @@ const NoRepeatingChracterAutomaton = ({
           <Button
             onClick={() => setisFullModel(!isFullModel)}
             variant={isFullModel ? "default" : "outline"}
+            className="w-full md:w-fit"
           >
-            {isFullModel ? "Disable Full Model" : "Enable Full Model"}
+            Full Model
           </Button>
           <Button
             variant={isValidInput ? "destructive" : "ghost"}
             onClick={() => setUserInput("")}
+            className="w-full md:w-fit"
           >
             Clear
           </Button>

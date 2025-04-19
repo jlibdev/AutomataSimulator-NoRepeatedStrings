@@ -5,6 +5,9 @@ import {
   ArrowDownToLine,
   ChevronLeft,
   ChevronRight,
+  Eye,
+  Hand,
+  Locate,
   Maximize2,
   MoveRight,
   Pause,
@@ -455,99 +458,104 @@ const VisualizerContent = ({
       <Label>{`Input String : ${
         userInput.length > 0 ? userInput : "Empty String"
       }`}</Label>
-      <div id="Actions" className="flex gap-2 h-10">
-        <div className="flex gap-2 items-center">
-          <Button onClick={() => gotoPrevState()} disabled={isPlaying}>
-            <ChevronLeft />
-          </Button>
-          <Button onClick={() => setIsPlaying(!isPlaying)}>
-            {!isPlaying ? <Play></Play> : <Pause></Pause>}
-          </Button>
-          <Button
-            onClick={() => handleReplay()}
-            disabled={isPlaying || currentIndex.current != userInput.length}
+      <div id="Actions" className="grid gap-2 lg:flex lg:h-10">
+        <div className="grid gap-2 lg:flex">
+          <div
+            id="non-toggle"
+            className="grid grid-cols-6 items-center gap-2 lg:flex"
           >
-            <RotateCcw></RotateCcw>
-          </Button>
-          <Button onClick={() => gotoNextState()} disabled={isPlaying}>
-            <ChevronRight></ChevronRight>
-          </Button>
-          <DownloadDropDown
-            items={[
-              { name: "JFLAP File (.jff)", onSelectFn: exportToJff },
-              { name: "PNG File (.png)", onSelectFn: exportToPNG },
-              { name: "JPEG File (.jpeg)", onSelectFn: exportToJPEG },
-              { name: "JSON File (.json)", onSelectFn: exportToJSON },
-            ]}
-          >
-            <Button disabled={isPlaying}>
-              <ArrowDownToLine></ArrowDownToLine>
+            <Button onClick={() => gotoPrevState()} disabled={isPlaying}>
+              <ChevronLeft />
             </Button>
-          </DownloadDropDown>
+            <Button onClick={() => setIsPlaying(!isPlaying)}>
+              {!isPlaying ? <Play></Play> : <Pause></Pause>}
+            </Button>
+            <Button
+              onClick={() => handleReplay()}
+              disabled={isPlaying || currentIndex.current != userInput.length}
+            >
+              <RotateCcw></RotateCcw>
+            </Button>
+            <Button onClick={() => gotoNextState()} disabled={isPlaying}>
+              <ChevronRight></ChevronRight>
+            </Button>
+            <DownloadDropDown
+              items={[
+                { name: "JFLAP File (.jff)", onSelectFn: exportToJff },
+                { name: "PNG File (.png)", onSelectFn: exportToPNG },
+                { name: "JPEG File (.jpeg)", onSelectFn: exportToJPEG },
+                { name: "JSON File (.json)", onSelectFn: exportToJSON },
+              ]}
+            >
+              <Button disabled={isPlaying}>
+                <ArrowDownToLine></ArrowDownToLine>
+              </Button>
+            </DownloadDropDown>
 
-          <Button onClick={() => handleFitModel()} disabled={isPlaying}>
-            <Maximize2></Maximize2>
-          </Button>
-          <Button
-            variant={isAutoFocus ? "default" : "outline"}
-            onClick={() => handleAutoFocus()}
-            disabled={isPlaying}
+            <Button onClick={() => handleFitModel()} disabled={isPlaying}>
+              <Maximize2></Maximize2>
+            </Button>
+          </div>
+          <div
+            id="toggles"
+            className="grid grid-cols-3 gap-2 items-center lg:flex"
           >
-            Auto Focus
-          </Button>
-          <Button
-            variant={isGrababble ? "default" : "outline"}
-            onClick={() => handleClickGrabble()}
-            disabled={isPlaying}
-          >
-            Grabbable
-          </Button>
-          <Button
-            variant={showPath ? "default" : "outline"}
-            onClick={() => setShowPath(!showPath)}
-          >
-            Show Paths
-          </Button>
-        </div>
-        <Separator orientation="vertical" />
-        <div className="flex w-full justify-between">
-          <div className="flex items-center w-full justify-end gap-10 font-bold">
-            <span>{`State Count : ${states.length - 1}`}</span>
-            <span>{`Transition Count : ${transitions.length}`}</span>
-            <span>
-              {`Selected State: ${
-                selectedNode
-                  ? cyRefInstance.current?.getElementById(selectedNode)?.data()
-                      ?.label
-                  : "None"
-              }`}
-            </span>
-
-            {isStringValid(userInput) ? (
-              <span className="text-white bold bg-red-500 min-w-[100px] text-center rounded-full">
-                Invalid
-              </span>
-            ) : (
-              <span className="text-white bold bg-green-500 min-w-[100px] text-center rounded-full">
-                Valid
-              </span>
-            )}
+            <Button
+              variant={isAutoFocus ? "default" : "outline"}
+              onClick={() => handleAutoFocus()}
+              disabled={isPlaying}
+              className="w-full lg:w-fit"
+            >
+              <Eye className="sm:hidden"></Eye>
+              <span className="hidden sm:flex">Auto Focus</span>
+            </Button>
+            <Button
+              variant={isGrababble ? "default" : "outline"}
+              onClick={() => handleClickGrabble()}
+              disabled={isPlaying}
+              className="w-full lg:w-fit"
+            >
+              <Hand className="sm:hidden"></Hand>
+              <span className="hidden sm:flex">Grabbable</span>
+            </Button>
+            <Button
+              variant={showPath ? "default" : "outline"}
+              onClick={() => setShowPath(!showPath)}
+              className="w-full lg:w-fit"
+            >
+              <Locate className="sm:hidden"></Locate>
+              <span className="hidden sm:flex">Show Paths</span>
+            </Button>
           </div>
         </div>
+        <Separator orientation="vertical" className="hidden md:block" />
+        <div className="flex items-center w-full justify-end gap-10 font-bold flex-wrap">
+          <span>{`States: ${states.length - 1}`}</span>
+          <span>{`Edges: ${transitions.length}`}</span>
+
+          {isStringValid(userInput) ? (
+            <span className="text-white bold bg-red-500 min-w-[100px] text-center rounded-full">
+              Invalid
+            </span>
+          ) : (
+            <span className="text-white bold bg-green-500 min-w-[100px] text-center rounded-full">
+              Valid
+            </span>
+          )}
+        </div>
       </div>
-      <div className="w-full grid grid-cols-6 gap-5">
+      <div className="w-full gap-5">
         <div
           ref={cyRef}
           className={cn(
-            "w-full h-[500px] rounded-md border-2 bg-slate-600",
-            showPath ? "col-span-5" : "col-span-6"
+            "w-full min-h-[200px] md:min-h-[400px] lg:min-h-[500px] rounded-md border-2 bg-slate-600"
           )}
         />
 
         {showPath && (
           <div className="border py-5 flex flex-col gap-5">
             <Label className="px-5">Current Node Path:</Label>
-            <div className="flex gap-2 flex-wrap  h-fit justify-center">
+            <div className="flex gap-2 flex-wrap h-fit justify-center">
               {paths.map((path) => (
                 <Button
                   className="rounded-full w-fit min-w-[80px] animate-in"

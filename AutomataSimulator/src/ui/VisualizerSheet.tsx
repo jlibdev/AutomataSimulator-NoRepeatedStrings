@@ -12,14 +12,16 @@ import {
 import VisualizerContent, { VisualizerContentProps } from "./VisualizerContent";
 
 interface VisualizerSheetProps extends VisualizerContentProps {
-  isFullModel : boolean
+  isFullModel: boolean;
 }
 
 const VisualizerSheet = ({ userInput, isFullModel }: VisualizerSheetProps) => {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant={"default"}>Visualizer</Button>
+        <Button variant={"default"} className="w-full md:w-fit">
+          Visualizer
+        </Button>
       </SheetTrigger>
       <SheetContent side="bottom">
         <SheetHeader>
@@ -29,7 +31,10 @@ const VisualizerSheet = ({ userInput, isFullModel }: VisualizerSheetProps) => {
           </SheetDescription>
         </SheetHeader>
         <div className="px-5">
-          <VisualizerContent userInput={userInput} isFullModel={isFullModel}></VisualizerContent>
+          <VisualizerContent
+            userInput={userInput}
+            isFullModel={isFullModel}
+          ></VisualizerContent>
         </div>
         <SheetFooter>
           <SheetClose asChild>
