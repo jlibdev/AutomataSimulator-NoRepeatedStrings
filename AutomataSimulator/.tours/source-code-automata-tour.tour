@@ -1,0 +1,92 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "Source Code Automata Tour",
+  "steps": [
+    {
+      "file": "src/pages/HomePage.tsx",
+      "description": "# Main Component\r\n## NoRepeatingCharacterAutomaton\r\n\r\n* Main Component of the program . It has the components required for user inputs, the component for the basic simulator and validator as well as the component for the visualizer.",
+      "line": 30
+    },
+    {
+      "file": "src/pages/HomePage.tsx",
+      "description": "# User Input State Setter Function\r\n\r\n## handleInputChange()\r\n\r\n* @param value : string -- This is the string that is being recieved from the input component\r\n\r\n* setUserInput() -- sets the value of our variable or this in case a react state ",
+      "line": 14
+    },
+    {
+      "file": "src/pages/HomePage.tsx",
+      "description": "# User Validator Effect Setter\r\n\r\n## Dependency -- userInput\r\n\r\n* This is a boolean state setter\r\n\r\n* This is the identifier if the string from user input is a valid string using the isStringValid function.\r\n",
+      "line": 18
+    },
+    {
+      "file": "src/utils/Validators.ts",
+      "description": "# Utility Function isStringValid(userInput: string)\r\n\r\n* Set() - Javascript object that lets you store unique values of any type, whether primitive values or object references.\r\n\r\n* This function uses the Set() object of Javascript to get all the unique values from the userInput string.\r\n\r\n* If the length of the return value from set is equal to the length of our userInput string, then that means that the userInput strings does not have any repeats and all characters are unique which is a valid input for us.\r\n\r\n",
+      "line": 16
+    },
+    {
+      "file": "src/pages/HomePage.tsx",
+      "description": "# Output Simulator Component\r\n\r\n* This is the component that shows the output of our string . Whether or not it is valid or invalid as well as highlights which character from the string are repeating and is causes the string to be invalid.\r\n\r\n",
+      "line": 37
+    },
+    {
+      "file": "src/ui/OutputSimulator.tsx",
+      "description": "# Output Simulator States and useEffect\r\n\r\n* [inputArray, setInputArray]\r\n    * Array of string (character in this context since only 1 letter per element) that will be used to map and render each character to the viewport separately so that we can apply tailwind styles to the separate valid and invalid characters\r\n\r\n* [repeating, setRepeating]\r\n    * Array of string (character in this context since only 1 letter per element) that are repeating in the current string.\r\n\r\n* useEffect(()=>{...},[inputString])\r\n    * Runs everytime the userInput state from our Homescreen changes.\r\n    * It splits the userInput into an array of string of characters and assings it to the inputArray state\r\n    * Then sets the repeating Array of string by calling the getRepeatingCharacters(string) function to get all the repeating characters. ",
+      "line": 15
+    },
+    {
+      "file": "src/utils/Validators.ts",
+      "description": "# Utility Function getRepeatingCharacters(str: string)\r\n\r\n* Iterates over the string and check if the character has been seen before",
+      "line": 20
+    },
+    {
+      "file": "src/ui/OutputSimulator.tsx",
+      "description": "## Render components for character\r\n\r\n* Maps over the inputArray string and render an h1 component for each character\r\n\r\n* Applied the red text color if the character is a repeating character\r\n\r\n* Defaulted to green at empty string when it is an accepted string and black for non-repeating character and red for repeated string when is invalid",
+      "line": 40
+    },
+    {
+      "file": "src/ui/NoRepeatingCharacterAutomaton.tsx",
+      "description": "# User input component\r\n\r\n* This user input is where we accept input from the user. Only Accepts numeric input[0-9]\r\n\r\n* Constrained to only accept input of type number and further constrained to exclude symbols (\".\", \"e\", \"+\", \"-\") as html input accepts those characters even at type number of input.\r\n",
+      "line": 28
+    },
+    {
+      "file": "src/ui/NoRepeatingCharacterAutomaton.tsx",
+      "description": "# VisualizerSheet Component\r\n\r\n## Component for the pop up div for showing the Visualizer\r\n\r\n* This component contains the VisualizerContent which is the main component for the model visualizer ",
+      "line": 57
+    },
+    {
+      "file": "src/ui/VisualizerContent.tsx",
+      "description": "# Visualizer Content State Initialization",
+      "line": 35
+    },
+    {
+      "file": "src/ui/VisualizerContent.tsx",
+      "description": "# useGetElements Function\r\n\r\n* Gets all the elements for the cytoscape div renderer\r\n\r\n* Returns states = All the states with type ElementDefination and format of {data : {id, label} , position: {x,y} , classes : \" \"}\r\n\r\n* Returns transitions = All edges/transition with type of ElementDefination and format of {data : {id, source : (id of source node) ,target : (id of target node) , label : (label or the input that it needs to move the target node) }, classes}",
+      "line": 45
+    },
+    {
+      "file": "src/hooks/useGetElements.ts",
+      "description": "# useGetElements Function Defination\r\n\r\n* Gets All the unique characters from userInput\r\n\r\n* Gets all the digits based on max digit + 1 of user input with cieling of 9 \r\n    * What this means is that when we input 09- it will return 0123456789 , or 15, it will return 0123456\r\n\r\n* Generate all the combinations of the all_digit on all length\r\n    * Number of combination from this is 2^n where n is the length of all_digits\r\n\r\n* Generate the data/ elements for the cytoscape div using the function generateFAElements()\r\n\r\n* Return the states and transitons array",
+      "line": 5
+    },
+    {
+      "file": "src/utils/state_generator.ts",
+      "description": "* Generates the elements that will be used by the model generator",
+      "line": 54
+    },
+    {
+      "file": "src/ui/VisualizerContent.tsx",
+      "description": "# Initialzation of the model visualizer\r\n\r\n* We use the library , cytoscape-js to generate interactive graph for our model.\r\n* layoutName : \"preset\" -> Our custom arrangement of nodes , has other options as well\r\n* states : Array of states with type of ElementDefination and format of {data : {id , label} , position : {x,y}, classes : \"\" }. Has other keys but we mainly use these for this one. \r\n* transitions : Array of transitions/edges with the same type ElementDefination as states but with format of\r\n    * {data : {id , source: (id of the source node) , target (id of the target node) , label : (in this context , this will serve as the input for the transition)} }\r\n\r\n* setSelectedNode : Not fully utilized and a semi scrached feature",
+      "line": 69
+    },
+    {
+      "file": "src/hooks/useCytoscapeFA.ts",
+      "description": "# Cytoscape object initilization (Model/Graph Renderer)\r\n\r\n* container : The html div element that cytoscape will draw on\r\n* layout : In what manner will the codes be rendered position wise\r\n* elements : Array of ElementDefination that contains both nodes and edges . This is what will be rendered on the div element\r\n* style : the style sheet of the elements in the div ",
+      "line": 32
+    },
+    {
+      "file": "src/cytoscape/style.ts",
+      "description": "# Style sheet for model",
+      "line": 1
+    }
+  ],
+  "ref": "6dc9bfd51743ff191c724c4e4151e14dace87451"
+}

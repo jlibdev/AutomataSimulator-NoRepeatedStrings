@@ -11,6 +11,7 @@ const OutputSimulator = ({
   inputString,
   isValidInput,
 }: OutputSimulatorProps) => {
+  
   const [inputArray, setInputArray] = useState<Array<string>>([]);
 
   const [repeating, setRepeating] = useState<Array<string>>([]);

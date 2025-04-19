@@ -34,10 +34,7 @@ const HomePage = () => {
             userInput={userInput}
           />
         </div>
-        <OutputSimulator
-          inputString={userInput}
-          isValidInput={isValidInput}
-        ></OutputSimulator>
+        <OutputSimulator inputString={userInput} isValidInput={isValidInput} />
       </div>
     </div>
   );

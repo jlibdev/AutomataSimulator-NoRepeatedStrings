@@ -22,10 +22,13 @@ export const useCytoscapeFA = (
     const instanceRef = useRef<Core| null>(null);
 
     useEffect(()=>{
+      // If there is no valid instance of the cytoscape ref div then this will not run
         if (!containerRef.current) return;
 
+      // If instanceRef has already been initialized , then destory old one so that we can store new instance with updates
         if (instanceRef.current) instanceRef.current.destroy();
 
+      // Initializes the cytoscape instance
         const cy = cytoscape({
             container: containerRef.current,
             layout: { name: layoutName },
@@ -35,6 +38,9 @@ export const useCytoscapeFA = (
       
         instanceRef.current = cy;
 
+        // Node Eevents
+
+        // Onselect of a node add selectedEdge class to outgoing edge of that class as well as selectedNode to target nodes of edges
         cy.on("select", "node", function (evt) {
           const node = evt.target as cytoscape.NodeSingular;
           node.addClass("selectedNode");
@@ -47,6 +53,7 @@ export const useCytoscapeFA = (
           setSelectedNode(node.data().id)
         });
 
+        // Unselect event , removes the added classes on select so that the style reverts to normal
         cy.on("unselect", "node", function (evt) {
           const node = evt.target as cytoscape.NodeSingular;;
           node.removeClass("selectedNode");
@@ -59,6 +66,9 @@ export const useCytoscapeFA = (
           setSelectedNode(null)
         });
 
+
+        // Drag event . Cytoscape does not have the initial state indicator so we make our own , this just means that we the position of inital state changes
+        // due to being grabbed by user . it will follow it
         cy.on("drag", "node", function (evt) {
           const node = evt.target;
     
@@ -70,6 +80,7 @@ export const useCytoscapeFA = (
           }
         });
 
+        // Clean up to prevent memory leaks
         return () => cy.destroy();
     },[])
    

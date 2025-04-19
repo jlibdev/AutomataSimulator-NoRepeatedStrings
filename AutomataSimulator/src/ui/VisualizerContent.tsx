@@ -32,20 +32,25 @@ const VisualizerContent = ({
   userInput,
   isFullModel,
 }: VisualizerContentProps) => {
+  // Div reference for the renderer of the Cytoscape library
   const cyRef = useRef<HTMLDivElement>(null);
 
+  // Stores the current index in which the visualizer is currently in terms of the stringInput.
   const currentIndex = useRef<number>(0);
+
+  // Stores the id of the current state in the model visualizer
   const currentState = useRef<string>("initial");
 
   // Get All Elements both states and transitions for the Model
   const { states, transitions } = useGetElements(userInput, isFullModel);
-  //   States Definition
 
+  // Stores an array of label for the path navigation
   const [paths, setPaths] = useState<Array<string>>(["q0"]);
 
   //   State for pressing the play button
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
+  // State for toogling showing the Path Component
   const [showPath, setShowPath] = useState<boolean>(false);
 
   //   State for toggle of grababble nodes
@@ -61,6 +66,7 @@ const VisualizerContent = ({
 
   //   Instance initialization for cytoscape . Generates the FA MODEL
 
+  // Hook that initializes the div ref/ renderer of cytoscape . This sets the layout, states, and transitions of the model
   const cyRefInstance = useCytoscapeFA({
     containerRef: cyRef,
     layoutName: "preset",
@@ -69,7 +75,7 @@ const VisualizerContent = ({
     setSelectedNode,
   });
 
-  //   UseEffect that enables / disables the nodes ability to be grabbed by the user
+  // UseEffect that enables / disables the nodes ability to be grabbed by the user
 
   useEffect(() => {
     if (!cyRefInstance.current) return;
@@ -90,13 +96,19 @@ const VisualizerContent = ({
     setIsGrababble((prev) => !prev);
   };
 
+  // Funtion to handle going to the next state
   const gotoNextState = () => {
+    // if the cytoscape reference is not set and the hook is not properly called then this function will not proceed to avoid errors
     if (!cyRefInstance.current) return false;
 
+    // Get the instance of the node from the cytoscape collection of nodes based on the id.
     const node = cyRefInstance.current.getElementById(currentState.current);
 
+    // Tracker of the current edge
     let current_edge = null;
 
+    // Checks if there are any edges in our node that connects to any state with input(label in the data structure for cytoscape)
+    // where any input/label matches with out current iteration of character in the string
     if (
       node
         .outgoers("edge")
@@ -105,27 +117,37 @@ const VisualizerContent = ({
         )
         .id()
     ) {
+      // If there are edges where the label is the character of our userIndex at currentIndex then,
       current_edge = node
         .outgoers("edge")
         .filter(
           (edge) => edge.data().label == userInput.charAt(currentIndex.current)
         );
 
+      // We add a class defined in out style sheet that highlights that this edge/path is a valid path to take
       current_edge.addClass("pathEdge");
 
+      // Get the target node of our current edge and set it as our next node
       const next_node = cyRefInstance.current.getElementById(
         current_edge.target().id()
       );
 
+      // Since that node is a valid node . We add a class that sets its style and color to match that of a valid node
       next_node.addClass("pathNode");
+
+      // Set the current state id as the id of out next_node
       currentState.current = next_node.id();
+
+      // Then set the next target character from our input string
       currentIndex.current = Math.min(
         currentIndex.current + 1,
         userInput.length
       );
 
+      // Handle transition
       handleStateTransitionAnimation();
 
+      // Set the paths array state using the getPath() function
       setPaths(getPath(cyRefInstance.current, userInput, currentState.current));
 
       return true;

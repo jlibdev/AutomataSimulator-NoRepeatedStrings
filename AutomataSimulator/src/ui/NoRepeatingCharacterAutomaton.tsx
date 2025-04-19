@@ -17,6 +17,8 @@ const NoRepeatingChracterAutomaton = ({
   isValidInput,
   setUserInput,
 }: NoRepeatingChracterAutomatonProps) => {
+  
+  // State for keeping track if the user wants to see the full model
   const [isFullModel, setisFullModel] = useState<boolean>(false);
 
   return (
