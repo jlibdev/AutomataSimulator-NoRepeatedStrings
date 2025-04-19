@@ -15,7 +15,7 @@ import { useEffect, useRef, useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import { useCytoscapeFA } from "@/hooks/useCytoscapeFA";
 import { useGetElements } from "@/hooks/useGetElements";
-import { getValidString, isStringValid } from "@/utils/Validators";
+import { isStringValid } from "@/utils/Validators";
 import { getPath } from "@/utils/cytoscape_functions";
 import DownloadDropDown from "./DownloadDropDown";
 import { getAllCharacterFromMax } from "../utils/sets";
@@ -430,7 +430,7 @@ const VisualizerContent = ({
 
     const link = document.createElement("a");
     link.href = jpegData;
-    link.download = "cytoscape_model.jpeg";
+    link.download = "String_with_no_repeating_character_model.jpeg";
     link.click();
   };
 
@@ -446,7 +446,7 @@ const VisualizerContent = ({
     });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = "cytoscape_model.json";
+    link.download = "String_with_no_repeating_character_model.json";
     link.click();
   };
 
