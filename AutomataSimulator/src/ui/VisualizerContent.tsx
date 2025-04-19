@@ -223,7 +223,7 @@ const VisualizerContent = ({
         },
         {
           center: { eles: current_node },
-          zoom: 1.5,
+          zoom: 0.5,
           duration: 500,
           complete: () => {
             current_node.animate(
@@ -264,6 +264,7 @@ const VisualizerContent = ({
   };
 
   const panToState = (id: string) => {
+    console.log(selectedNode);
     const cy = cyRefInstance.current;
     if (!cy) return;
 
@@ -281,7 +282,7 @@ const VisualizerContent = ({
           center: {
             eles: node,
           },
-          zoom: 1.5,
+          zoom: 0.5,
           duration: 500,
           easing: "ease-out",
         });
